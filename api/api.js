@@ -9,6 +9,8 @@ api.use(bodyParser.urlencoded({ extended: false }));
 const mongoose = require('mongoose');
 const AstroObject = mongoose.model('AstroObject');
 
+const baseURL = '/star-stuff/v1';
+
 function hasWriteAccess(req) {
   if (req.headers.authorization) {
     return Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString() === process.env.MASTER_PW;
@@ -18,7 +20,7 @@ function hasWriteAccess(req) {
 }
 
 // Create object
-api.post('/new-object', async (req, res) => {
+api.post(baseURL + '/new-object', async (req, res) => {
   if (hasWriteAccess(req)) {
     const astroObject = req.body;
     if (astroObject.name) {
@@ -41,13 +43,15 @@ api.post('/new-object', async (req, res) => {
 
 
 // Get all objects
-api.get('/objects', async (req, res) => {
+api.get(baseURL + '/objects', async (req, res) => {
   const allObjects = await AstroObject.find();
+  res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate')
   res.status(200).send(allObjects);
 });
 
 // Get one object
-api.get('/object/:slug', async (req, res) => {
+api.get(baseURL + '/object/:slug', async (req, res) => {
+  res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate')
   const astroObjectSlug = req.params.slug;
   AstroObject.findOne({ slug: astroObjectSlug }, (err, object) => {
     if (err) {
@@ -61,9 +65,10 @@ api.get('/object/:slug', async (req, res) => {
   });
 });
 
-// Get ltitude and azimuth of an object
+// Get latitude and azimuth of an object
 // Requires the following query params: datetime (local time in ISO), lat (decimal degrees), and lon (decimal degrees)
-api.get('/object/:slug/altaz', async (req, res) => {
+api.get(baseURL + '/object/:slug/altaz', async (req, res) => {
+  res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate')
   const astroObjectSlug = req.params.slug;
   AstroObject.findOne({ slug: astroObjectSlug }, (err, object) => {
     if (err) {
@@ -85,7 +90,7 @@ api.get('/object/:slug/altaz', async (req, res) => {
 });
 
 // Update object
-api.patch('/object/:slug', async (req, res) =>{
+api.patch(baseURL + '/object/:slug', async (req, res) =>{
   if (hasWriteAccess(req)) {
     const astroObjectSlug= req.params.slug;
     const objectUpdate = req.body;
@@ -110,7 +115,7 @@ api.patch('/object/:slug', async (req, res) =>{
 });
 
 // Delete one object
-api.delete('/object/:slug', (req, res) => {
+api.delete(baseURL + '/object/:slug', (req, res) => {
   if (hasWriteAccess(req)) {
     const astroObjectSlug = req.params.slug;
     AstroObject.findOneAndDelete({ slug: astroObjectSlug }, (err, object) => {
@@ -118,9 +123,9 @@ api.delete('/object/:slug', (req, res) => {
         console.error(err);
         res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
       } else if (!object) {
-        res.status(404).json({ mesage: 'Invalid site slug.' })
+        res.status(404).json({ mesage: 'Invalid object slug.' })
       } else {
-        return res.status(200).json({ message: 'Successfully deleted site.', data: object });
+        return res.status(200).json({ message: 'Successfully deleted object.', data: object });
       }
     });
   } else {
