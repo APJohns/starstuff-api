@@ -87,11 +87,12 @@ api.patch('/object/:slug', async (req, res) =>{
       return res.status(200).json({ message: 'Successfully updated site.', data: site });
     }
   });
-});
+});*/
 
+// Delete one object
 api.delete('/object/:slug', (req, res) => {
-  const siteSlug = req.params.slug;
-  Site.findOneAndDelete({ slug: siteSlug }, (err, site) => {
+  const astroObjectSlug = req.params.slug;
+  AstroObject.findOneAndDelete({ slug: astroObjectSlug }, (err, site) => {
     if (err) {
       console.error(err);
       res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
@@ -101,6 +102,6 @@ api.delete('/object/:slug', (req, res) => {
       return res.status(200).json({ message: 'Successfully deleted site.', data: site });
     }
   });
-}); */
+});
 
 module.exports = api;
