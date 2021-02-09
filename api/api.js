@@ -9,18 +9,32 @@ api.use(bodyParser.urlencoded({ extended: false }));
 const mongoose = require('mongoose');
 const AstroObject = mongoose.model('AstroObject');
 
+function hasWriteAccess(req) {
+  if (req.headers.authorization) {
+    return Buffer.from(req.headers.authorization.split(' ')[1], 'base64').toString() === process.env.MASTER_PW;
+  } else {
+    return false;
+  }
+}
+
 // Create object
 api.post('/new-object', async (req, res) => {
-  const astroObject = req.body;
-  if (astroObject.name) {
-    await (new AstroObject(astroObject)).save();
+  if (hasWriteAccess(req)) {
+    const astroObject = req.body;
+    if (astroObject.name) {
+      await (new AstroObject(astroObject)).save();
 
-    res.status(201).json({
-      message: "AstroObject successfully registered."
-    });
+      res.status(201).json({
+        message: "AstroObject successfully registered."
+      });
+    } else {
+      res.status(401).json({
+        message: "AstroObject failed to register."
+      });
+    }
   } else {
-    res.status(401).json({
-      message: "AstroObject failed to register."
+    res.status(403).json({
+      message: "You don't have write access. Contact mail@ashpjohns.com to request write access."
     });
   }
 });
@@ -72,36 +86,48 @@ api.get('/object/:slug/altaz', async (req, res) => {
 
 // Update object
 api.patch('/object/:slug', async (req, res) =>{
-  const astroObjectSlug= req.params.slug;
-  const objectUpdate = req.body;
+  if (hasWriteAccess(req)) {
+    const astroObjectSlug= req.params.slug;
+    const objectUpdate = req.body;
 
-  AstroObject.findOne({ slug: astroObjectSlug }, (err, object) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
-    } else if (!object) {
-      res.status(404).json({ mesage: 'Invalid object slug.' })
-    } else {
-      Object.assign(object, objectUpdate);
-      object.save();
-      return res.status(200).json({ message: 'Successfully updated object.', data: object });
-    }
-  });
+    AstroObject.findOne({ slug: astroObjectSlug }, (err, object) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
+      } else if (!object) {
+        res.status(404).json({ mesage: 'Invalid object slug.' })
+      } else {
+        Object.assign(object, objectUpdate);
+        object.save();
+        return res.status(200).json({ message: 'Successfully updated object.', data: object });
+      }
+    });
+  } else {
+    res.status(403).json({
+      message: "You don't have write access. Contact mail@ashpjohns.com to request write access."
+    });
+  }
 });
 
 // Delete one object
 api.delete('/object/:slug', (req, res) => {
-  const astroObjectSlug = req.params.slug;
-  AstroObject.findOneAndDelete({ slug: astroObjectSlug }, (err, object) => {
-    if (err) {
-      console.error(err);
-      res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
-    } else if (!object) {
-      res.status(404).json({ mesage: 'Invalid site slug.' })
-    } else {
-      return res.status(200).json({ message: 'Successfully deleted site.', data: object });
-    }
-  });
+  if (hasWriteAccess(req)) {
+    const astroObjectSlug = req.params.slug;
+    AstroObject.findOneAndDelete({ slug: astroObjectSlug }, (err, object) => {
+      if (err) {
+        console.error(err);
+        res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
+      } else if (!object) {
+        res.status(404).json({ mesage: 'Invalid site slug.' })
+      } else {
+        return res.status(200).json({ message: 'Successfully deleted site.', data: object });
+      }
+    });
+  } else {
+    res.status(403).json({
+      message: "You don't have write access. Contact mail@ashpjohns.com to request write access."
+    });
+  }
 });
 
 module.exports = api;
