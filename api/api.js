@@ -9,6 +9,7 @@ api.use(bodyParser.urlencoded({ extended: false }));
 const mongoose = require('mongoose');
 const AstroObject = mongoose.model('AstroObject');
 
+// Create object
 api.post('/new-object', async (req, res) => {
   const astroObject = req.body;
   if (astroObject.name) {
@@ -24,6 +25,14 @@ api.post('/new-object', async (req, res) => {
   }
 });
 
+
+// Get all objects
+api.get('/objects', async (req, res) => {
+  const allObjects = await AstroObject.find();
+  res.status(200).send(allObjects);
+});
+
+// Get one object
 api.get('/object/:slug', async (req, res) => {
   const astroObjectSlug = req.params.slug;
   AstroObject.findOne({ slug: astroObjectSlug }, (err, object) => {
@@ -38,6 +47,8 @@ api.get('/object/:slug', async (req, res) => {
   });
 });
 
+// Get ltitude and azimuth of an object
+// Requires the following query params: datetime (local time in ISO), lat (decimal degrees), and lon (decimal degrees)
 api.get('/object/:slug/altaz', async (req, res) => {
   const astroObjectSlug = req.params.slug;
   AstroObject.findOne({ slug: astroObjectSlug }, (err, object) => {
@@ -58,12 +69,8 @@ api.get('/object/:slug/altaz', async (req, res) => {
     }
   });
 });
-/*
-api.get('/object', async (req, res) => {
-  const allSites = await Site.find();
-  res.status(200).send(allSites);
-});
 
+/*
 api.patch('/object/:slug', async (req, res) =>{
   const siteSlug= req.params.slug;
   const siteUpdate = req.body;
