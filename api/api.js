@@ -37,6 +37,27 @@ api.get('/object/:slug', async (req, res) => {
     }
   });
 });
+
+api.get('/object/:slug/altaz', async (req, res) => {
+  const astroObjectSlug = req.params.slug;
+  AstroObject.findOne({ slug: astroObjectSlug }, (err, object) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
+    } else if (!object) {
+      res.status(404).json({ mesage: 'Invalid object slug.' })
+    } else {
+      let date = new Date(req.query.date);
+      let lat = Number(req.query.lat);
+      let lon = Number(req.query.lon);
+      if (date && lat && lon) {
+        res.status(200).send(object.getAltAz(date, lat, lon));
+      } else {
+        res.status(404).json({ mesage: 'Invalid date, lat or lon.' })
+      }
+    }
+  });
+});
 /*
 api.get('/object', async (req, res) => {
   const allSites = await Site.find();
