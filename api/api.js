@@ -70,36 +70,36 @@ api.get('/object/:slug/altaz', async (req, res) => {
   });
 });
 
-/*
+// Update object
 api.patch('/object/:slug', async (req, res) =>{
-  const siteSlug= req.params.slug;
-  const siteUpdate = req.body;
+  const astroObjectSlug= req.params.slug;
+  const objectUpdate = req.body;
 
-  Site.findOne({ slug: siteSlug }, (err, site) => {
+  AstroObject.findOne({ slug: astroObjectSlug }, (err, object) => {
     if (err) {
       console.error(err);
       res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
-    } else if (!site) {
-      res.status(404).json({ mesage: 'Invalid site slug.' })
+    } else if (!object) {
+      res.status(404).json({ mesage: 'Invalid object slug.' })
     } else {
-      Object.assign(site, siteUpdate);
-      site.save();
-      return res.status(200).json({ message: 'Successfully updated site.', data: site });
+      Object.assign(object, objectUpdate);
+      object.save();
+      return res.status(200).json({ message: 'Successfully updated object.', data: object });
     }
   });
-});*/
+});
 
 // Delete one object
 api.delete('/object/:slug', (req, res) => {
   const astroObjectSlug = req.params.slug;
-  AstroObject.findOneAndDelete({ slug: astroObjectSlug }, (err, site) => {
+  AstroObject.findOneAndDelete({ slug: astroObjectSlug }, (err, object) => {
     if (err) {
       console.error(err);
       res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
-    } else if (!site) {
+    } else if (!object) {
       res.status(404).json({ mesage: 'Invalid site slug.' })
     } else {
-      return res.status(200).json({ message: 'Successfully deleted site.', data: site });
+      return res.status(200).json({ message: 'Successfully deleted site.', data: object });
     }
   });
 });
