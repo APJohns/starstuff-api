@@ -71,12 +71,12 @@ astroObjectSchema.methods.getAltAz = function(date, lat, lon) {
 
   // Calcualtes number of days since J200 from target date
   const daysSinceJ2000 = (date) => {
-    let year = date.getFullYear();
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    let hour = date.getHours();
-    let minute = date.getMinutes();
-    let second = date.getSeconds();
+    let year = date.getUTCFullYear();
+    let month = date.getUTCMonth() + 1;
+    let day = date.getUTCDate();
+    let hour = date.getUTCHours();
+    let minute = date.getUTCMinutes();
+    let second = date.getUTCSeconds();
 
     if (month === 1 || month === 2) {
       year  = year - 1
