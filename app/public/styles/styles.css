@@ -1,9 +1,10 @@
 .table-responsive {
   width: 100%;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 table {
+  width: 100%;
   border: 1px solid #284c82;
 }
 
