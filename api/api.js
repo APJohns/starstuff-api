@@ -9,7 +9,7 @@ api.use(bodyParser.urlencoded({ extended: false }));
 const mongoose = require('mongoose');
 const AstroObject = mongoose.model('AstroObject');
 
-const baseURL = '/api/v1';
+const baseURL = '/star-stuff/v1';
 
 function hasWriteAccess(req) {
   if (req.headers.authorization) {
