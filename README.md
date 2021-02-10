@@ -9,8 +9,8 @@ An API containing information on celestial objects, including getting the altitu
 Property | Type | Description | Notes
 --- | --- | --- | ---
 name | string | The name of the celestial object *e.g. M1* | required.
-commonName | string | The common name of the celestial object *e.g. The Crab Nebula* |
-objectType | string | The type of the celestial object *e.g. Supernova Remnant* |
+commonName | string | The common name of the celestial object. For Messier objects this includes the NGC number. *e.g. The Crab Nebula* |
+type | string | The type of the celestial object *e.g. Supernova Remnant* |
 rightAscension | string | The right ascension of the celestial object *e.g. 5h 34.5m* |
 declination | string | The declination of the celestial object *e.g. +22d 01m* |
 apparentMagnitude | string | The apparent magnitude of the celestial object *e.g. 8.4* |
