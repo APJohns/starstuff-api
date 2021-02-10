@@ -16,7 +16,7 @@ declination | string | The declination of the celestial object *e.g. +22d 01m* |
 apparentMagnitude | string | The apparent magnitude of the celestial object *e.g. 8.4* |
 constellation | string | The constellation that the celestial object is closest to or in. *e.g. Taurus* |
 slug | string | The url friendly version of the name. *e.g. m1* | Auto-generated on creation.
-recordCreated | string | The datetime when the record was created. *e.g. m1* | Auto-generated on creation.
+recordCreated | string | The datetime when the record was created. *e.g. 2021-02-09T23:00:00* | Auto-generated on creation.
 
 ### Methods
 
