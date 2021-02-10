@@ -17,8 +17,7 @@ require('./api/models/AstroObject');
 
 // Star app
 const api = require('./api/api.js');
-api.set('port', process.env.PORT || 3200);
 
-api.listen(api.get('port'), () => {
-  console.log(`API is running on port ${api.get('port')}`);
+api.listen(process.env.PORT || 3200, () => {
+  console.log(`API is running on port ${process.env.PORT || 3200}`);
 });
