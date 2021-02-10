@@ -13,10 +13,10 @@ db.once('open', function() {
 });
 
 // Data models
-require('./models/AstroObject');
+require('./api/models/AstroObject');
 
 // Star app
-const api = require('./api.js');
+const api = require('./api/api.js');
 api.set('port', process.env.PORT || 3200);
 
 api.listen(api.get('port'), () => {
