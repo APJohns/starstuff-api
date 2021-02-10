@@ -7,7 +7,7 @@ api.use(bodyParser.json());
 api.use(bodyParser.urlencoded({ extended: false }));
 
 const mongoose = require('mongoose');
-const AstroObject = mongoose.model('AstroObject');
+const Celestial = mongoose.model('Celestial');
 
 const baseURL = '/star-stuff/v1';
 
@@ -19,19 +19,19 @@ function hasWriteAccess(req) {
   }
 }
 
-// Create object
-api.post(baseURL + '/new-object', async (req, res) => {
+// Create celestial
+api.post(baseURL + '/new-celestial', async (req, res) => {
   if (hasWriteAccess(req)) {
-    const astroObject = req.body;
-    if (astroObject.name) {
-      await (new AstroObject(astroObject)).save();
+    const celestial = req.body;
+    if (celestial.name) {
+      await (new Celestial(celestial)).save();
 
       res.status(201).json({
-        message: "AstroObject successfully registered."
+        message: "Celestial successfully registered."
       });
     } else {
       res.status(401).json({
-        message: "AstroObject failed to register."
+        message: "Celestial failed to register."
       });
     }
   } else {
@@ -42,46 +42,46 @@ api.post(baseURL + '/new-object', async (req, res) => {
 });
 
 
-// Get all objects
-api.get(baseURL + '/objects', async (req, res) => {
-  const allObjects = await AstroObject.find();
+// Get all celestials
+api.get(baseURL + '/celestials', async (req, res) => {
+  const allCelestials = await Celestial.find();
   res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate')
-  res.status(200).send(allObjects);
+  res.status(200).send(allCelestials);
 });
 
-// Get one object
-api.get(baseURL + '/object/:slug', async (req, res) => {
+// Get one celestial
+api.get(baseURL + '/celestial/:slug', async (req, res) => {
   res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate')
-  const astroObjectSlug = req.params.slug;
-  AstroObject.findOne({ slug: astroObjectSlug }, (err, object) => {
+  const celestialSlug = req.params.slug;
+  Celestial.findOne({ slug: celestialSlug }, (err, celestial) => {
     if (err) {
       console.error(err);
       res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
-    } else if (!object) {
-      res.status(404).json({ mesage: 'Invalid object slug.' })
+    } else if (!celestial) {
+      res.status(404).json({ mesage: 'Invalid celestial slug.' })
     } else {
-      res.status(200).send(object);
+      res.status(200).send(celestial);
     }
   });
 });
 
-// Get latitude and azimuth of an object
+// Get latitude and azimuth of an celestial
 // Requires the following query params: datetime (local time in ISO), lat (decimal degrees), and lon (decimal degrees)
-api.get(baseURL + '/object/:slug/altaz', async (req, res) => {
+api.get(baseURL + '/celestial/:slug/altaz', async (req, res) => {
   res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate')
-  const astroObjectSlug = req.params.slug;
-  AstroObject.findOne({ slug: astroObjectSlug }, (err, object) => {
+  const celestialSlug = req.params.slug;
+  Celestial.findOne({ slug: celestialSlug }, (err, celestial) => {
     if (err) {
       console.error(err);
       res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
-    } else if (!object) {
-      res.status(404).json({ mesage: 'Invalid object slug.' })
+    } else if (!celestial) {
+      res.status(404).json({ mesage: 'Invalid celestial slug.' })
     } else {
       let date = new Date(req.query.date);
       let lat = Number(req.query.lat);
       let lon = Number(req.query.lon);
       if (date && lat && lon) {
-        res.status(200).send(object.getAltAz(date, lat, lon));
+        res.status(200).send(celestial.getAltAz(date, lat, lon));
       } else {
         res.status(404).json({ mesage: 'Invalid date, lat or lon.' })
       }
@@ -89,22 +89,22 @@ api.get(baseURL + '/object/:slug/altaz', async (req, res) => {
   });
 });
 
-// Update object
-api.patch(baseURL + '/object/:slug', async (req, res) =>{
+// Update celestial
+api.patch(baseURL + '/celestial/:slug', async (req, res) =>{
   if (hasWriteAccess(req)) {
-    const astroObjectSlug= req.params.slug;
-    const objectUpdate = req.body;
+    const celestialSlug= req.params.slug;
+    const celestialUpdate = req.body;
 
-    AstroObject.findOne({ slug: astroObjectSlug }, (err, object) => {
+    Celestial.findOne({ slug: celestialSlug }, (err, celestial) => {
       if (err) {
         console.error(err);
         res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
-      } else if (!object) {
-        res.status(404).json({ mesage: 'Invalid object slug.' })
+      } else if (!celestial) {
+        res.status(404).json({ mesage: 'Invalid celestial slug.' })
       } else {
-        Object.assign(object, objectUpdate);
-        object.save();
-        return res.status(200).json({ message: 'Successfully updated object.', data: object });
+        Object.assign(celestial, celestialUpdate);
+        celestial.save();
+        return res.status(200).json({ message: 'Successfully updated celestial.', data: celestial });
       }
     });
   } else {
@@ -114,18 +114,18 @@ api.patch(baseURL + '/object/:slug', async (req, res) =>{
   }
 });
 
-// Delete one object
-api.delete(baseURL + '/object/:slug', (req, res) => {
+// Delete one celestial
+api.delete(baseURL + '/celestial/:slug', (req, res) => {
   if (hasWriteAccess(req)) {
-    const astroObjectSlug = req.params.slug;
-    AstroObject.findOneAndDelete({ slug: astroObjectSlug }, (err, object) => {
+    const celestialSlug = req.params.slug;
+    Celestial.findOneAndDelete({ slug: celestialSlug }, (err, celestial) => {
       if (err) {
         console.error(err);
         res.status(500).json({ mesage: 'Oops, something went wrong on our end.' })
-      } else if (!object) {
-        res.status(404).json({ mesage: 'Invalid object slug.' })
+      } else if (!celestial) {
+        res.status(404).json({ mesage: 'Invalid celestial slug.' })
       } else {
-        return res.status(200).json({ message: 'Successfully deleted object.', data: object });
+        return res.status(200).json({ message: 'Successfully deleted celestial.', data: celestial });
       }
     });
   } else {

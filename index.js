@@ -13,7 +13,7 @@ db.once('open', function() {
 });
 
 // Data models
-require('./api/models/AstroObject');
+require('./api/models/Celestial');
 
 // Star app
 const api = require('./api/api.js');

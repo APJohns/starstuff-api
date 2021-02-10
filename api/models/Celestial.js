@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 const slug = require('slugs');
 
-const astroObjectSchema = new mongoose.Schema({
+const celestialSchema = new mongoose.Schema({
   name: {
     type: String,
     trim: true,
@@ -26,10 +26,6 @@ const astroObjectSchema = new mongoose.Schema({
     trim: true,
     required: 'Please enter a declination!'
   },
-  distance: {
-    type: String,
-    trim: true
-  },
   apparentMagnitude: {
     type: String,
     trim: true
@@ -48,11 +44,11 @@ const astroObjectSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-astroObjectSchema.index({
+celestialSchema.index({
   name: 'text'
 });
 
-astroObjectSchema.methods.getAltAz = function(date, lat, lon) {
+celestialSchema.methods.getAltAz = function(date, lat, lon) {
   const ra2real = (hrs, mins) => {
     return 15 * (hrs + mins / 60);
   }
@@ -155,11 +151,11 @@ astroObjectSchema.methods.getAltAz = function(date, lat, lon) {
   }
 }
 
-astroObjectSchema.pre('save', async function(next) {
+celestialSchema.pre('save', async function(next) {
   if (this.isModified('name')) {
     this.slug = slug(this.name);
   }
   next();
 });
 
-module.exports = mongoose.model('AstroObject', astroObjectSchema);
+module.exports = mongoose.model('Celestial', celestialSchema);
