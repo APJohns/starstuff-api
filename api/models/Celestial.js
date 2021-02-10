@@ -12,7 +12,7 @@ const celestialSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  objectType: {
+  type: {
     type: String,
     trim: true
   },
