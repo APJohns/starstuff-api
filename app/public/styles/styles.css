@@ -1,3 +1,8 @@
+.table-responsive {
+  width: 100%;
+  overflow-x: scroll;
+}
+
 table {
   border: 1px solid #284c82;
 }
