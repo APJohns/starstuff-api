@@ -1,0 +1,141 @@
+extends ./layout.pug
+
+block header
+  .container.mt-5
+      .row
+        .col
+          h1 Star Stuff API
+block main
+  .container.mb-5
+    .row
+      .col
+        p An API containing information on celestial objects, including getting the altitude and azimuth of an object base on your datetime and location.
+        h2.mb-3 Celestial Object Model
+        h3 Properties
+        table.mb-5
+          thead
+            tr
+              th Property
+              th Type
+              th Description
+              th Notes
+          tbody
+            tr
+              td name
+              td string
+              td
+                | The name of the celestial object
+                em e.g. M1
+              td required.
+            tr
+              td commonName
+              td string
+              td
+                | The common name of the celestial object. For Messier objects this includes the NGC number.
+                em e.g. The Crab Nebula
+              td
+            tr
+              td type
+              td string
+              td
+                | The type of the celestial object
+                em e.g. Supernova Remnant
+              td
+            tr
+              td rightAscension
+              td string
+              td
+                | The right ascension of the celestial object
+                em e.g. 5h 34.5m
+              td
+            tr
+              td declination
+              td string
+              td
+                | The declination of the celestial object
+                em e.g. +22d 01m
+              td
+            tr
+              td apparentMagnitude
+              td string
+              td
+                | The apparent magnitude of the celestial object
+                em e.g. 8.4
+              td
+            tr
+              td constellation
+              td string
+              td
+                | The constellation that the celestial object is closest to or in.
+                em e.g. Taurus
+              td
+            tr
+              td slug
+              td string
+              td
+                | The url friendly version of the name.
+                em e.g. m1
+              td Auto-generated on creation.
+            tr
+              td recordCreated
+              td string
+              td
+                | The datetime when the record was created.
+                em e.g. m1
+              td Auto-generated on creation.
+        h3#methods.mb-3 Methods
+        h4#getaltaz getAltAz
+        p
+          | Calculates the altitude and azimuth of the celestial body based on the users date, latitude, and longitude.
+        h5#return-type Return Type
+        pre.
+
+        h5#parameters Parameters
+        ul
+          li
+            | date: The date in local ISO format
+            em e.g. 2021-02-09T23:00:00
+          li
+            | lat: The latitude in degree decimals
+            em e.g. 42.36
+          li
+            | lon: The longitude in degree decimals
+            em e.g. -71.05
+        h2#endpoints Endpoints
+        p.mb-4
+          | Host URL is&nbsp;
+          a(href='https://star-stuff.herokuapp.com/') https://star-stuff.herokuapp.com/
+        h3#get-all-celestial-objects Get All Celestial Objects
+        p.mb-0
+          code GET /star-stuff/v1/celestials
+        p Returns an array of all the celestial objects in the API.
+        h3#get-one-celestial-object.mt-4 Get One Celestial Object
+        p.mb-0
+          code GET /star-stuff/v1/celestial/&lt;name&gt;
+        p Returns one celestial object based on the provided name.
+        h3#get-celestial-object-alt-az.mt-4 Get Celestial Object Alt/Az
+        p.mb-0
+          code GET /star-stuff/v1/celestial/&lt;name&gt;/altaz?date=&lt;date&gt;&amp;lat=&lt;lat&gt;&amp;lon=&lt;lon&gt;
+        p
+          | Returns the altitude and azimuth of the celestial object based on the given date, latitude, and longitude.
+        h3#edit-celestial-object.mt-4 Edit Celestial Object
+        p.mb-0
+          code PATCH /star-stuff/v1/celestial/&lt;name&gt;
+        p
+          | Edits a celestial object. The properties and their new valeus should be included in the request body. Requires write access.
+        h3#create-celestial-object.mt-4 Create Celestial Object
+        p.mb-0
+          code POST /star-stuff/v1/new-celestial
+        p
+          | Creates a new celestial object. The proeprties of the object should be included in the request body. Requires write access.
+        h3#delete-celestial-object.mt-4 Delete Celestial Object
+        p.mb-0
+          code DELETE /star-stuff/v1/celestial/&lt;name&gt;
+        p Deletes a celestial object. Requires write access.
+        h2#contributing.mt-5 Contributing
+        p
+          | If you would like to add to the API database, you can request write access by emailing me at&nbsp;
+          a(href="mailto:mail@ashpjohns.com") mail@ashpjohns.com
+          | .
+        p
+          | If you would like to contribute to the codebase, go ahead and create issues or even put up a pull request.

@@ -13,11 +13,11 @@ db.once('open', function() {
 });
 
 // Data models
-require('./api/models/Celestial');
+require('./app/models/Celestial');
 
 // Star app
-const api = require('./api/api.js');
+const app = require('./app/app.js');
 
-api.listen(process.env.PORT || 3200, () => {
-  console.log(`API is running on port ${process.env.PORT || 3200}`);
+app.listen(process.env.PORT || 3200, () => {
+  console.log(`App is running on port ${process.env.PORT || 3200}`);
 });

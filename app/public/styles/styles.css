@@ -1,0 +1,25 @@
+table {
+  border: 1px solid #284c82;
+}
+
+table thead tr {
+  color: white;
+  background: #284c82;
+}
+
+table thead th {
+  padding: 10px 20px;
+}
+
+table tbody tr:nth-child(odd) {
+  background: #ebf3ff;
+}
+
+table tbody td {
+  padding: 5px 20px;
+}
+
+h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}

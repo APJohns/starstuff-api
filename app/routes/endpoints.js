@@ -1,15 +1,7 @@
 const express = require('express');
-const api = express();
-const bodyParser = require('body-parser');
-
-
-api.use(bodyParser.json());
-api.use(bodyParser.urlencoded({ extended: false }));
-
+const router = express.Router();
 const mongoose = require('mongoose');
 const Celestial = mongoose.model('Celestial');
-
-const baseURL = '/star-stuff/v1';
 
 function hasWriteAccess(req) {
   if (req.headers.authorization) {
@@ -20,7 +12,7 @@ function hasWriteAccess(req) {
 }
 
 // Create celestial
-api.post(baseURL + '/new-celestial', async (req, res) => {
+router.post('/new-celestial', async (req, res) => {
   if (hasWriteAccess(req)) {
     const celestial = req.body;
     if (celestial.name) {
@@ -43,14 +35,14 @@ api.post(baseURL + '/new-celestial', async (req, res) => {
 
 
 // Get all celestials
-api.get(baseURL + '/celestials', async (req, res) => {
+router.get('/celestials', async (req, res) => {
   const allCelestials = await Celestial.find();
   res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate')
   res.status(200).send(allCelestials);
 });
 
 // Get one celestial
-api.get(baseURL + '/celestial/:slug', async (req, res) => {
+router.get('/celestial/:slug', async (req, res) => {
   res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate')
   const celestialSlug = req.params.slug;
   Celestial.findOne({ slug: celestialSlug }, (err, celestial) => {
@@ -67,7 +59,7 @@ api.get(baseURL + '/celestial/:slug', async (req, res) => {
 
 // Get latitude and azimuth of an celestial
 // Requires the following query params: datetime (local time in ISO), lat (decimal degrees), and lon (decimal degrees)
-api.get(baseURL + '/celestial/:slug/altaz', async (req, res) => {
+router.get('/celestial/:slug/altaz', async (req, res) => {
   res.setHeader('Cache-Control', 's-max-age=1, stale-while-revalidate')
   const celestialSlug = req.params.slug;
   Celestial.findOne({ slug: celestialSlug }, (err, celestial) => {
@@ -90,7 +82,7 @@ api.get(baseURL + '/celestial/:slug/altaz', async (req, res) => {
 });
 
 // Update celestial
-api.patch(baseURL + '/celestial/:slug', async (req, res) =>{
+router.patch('/celestial/:slug', async (req, res) =>{
   if (hasWriteAccess(req)) {
     const celestialSlug= req.params.slug;
     const celestialUpdate = req.body;
@@ -115,7 +107,7 @@ api.patch(baseURL + '/celestial/:slug', async (req, res) =>{
 });
 
 // Delete one celestial
-api.delete(baseURL + '/celestial/:slug', (req, res) => {
+router.delete('/celestial/:slug', (req, res) => {
   if (hasWriteAccess(req)) {
     const celestialSlug = req.params.slug;
     Celestial.findOneAndDelete({ slug: celestialSlug }, (err, celestial) => {
@@ -135,4 +127,4 @@ api.delete(baseURL + '/celestial/:slug', (req, res) => {
   }
 });
 
-module.exports = api;
+module.exports = router;
