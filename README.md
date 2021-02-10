@@ -42,6 +42,7 @@ Calculates the altitude and azimuth of the celestial body based on the users dat
 ## Endpoints
 
 Host URL is https://star-stuff.herokuapp.com/
+Dedicated host name and Heroku dynon coming soon...
 
 ### Get All Celestial Objects
 
